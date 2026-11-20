@@ -3,458 +3,635 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Router Hub</title>
+    <title>RouterHub Dashboard</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        :root {
+            --page: #070b18;
+            --shell: #171c2d;
+            --panel: #202637;
+            --panel-2: #191f30;
+            --line: rgba(255, 255, 255, 0.09);
+            --text: #f4f5fa;
+            --muted: #9da4b8;
+            --accent: #b75dca;
+            --accent-2: #7d78c9;
+            --success: #66d6a3;
+            --danger: #ff7e98;
         }
+
+        * { box-sizing: border-box; }
 
         body {
-            background: #0a0a0a;
-            color: #ffffff;
+            margin: 0;
             min-height: 100vh;
-            padding: 45px 25px;
+            padding: 44px;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 50% 120%, rgba(87, 66, 138, 0.22), transparent 38%),
+                var(--page);
+            font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
         }
 
-        .wrapper {
-            max-width: 1050px;
+        button, input { font: inherit; }
+
+        .dashboard {
+            width: min(1120px, 100%);
+            min-height: 680px;
             margin: 0 auto;
-            animation: fadeIn 0.5s ease;
-        }
-
-        /* Header Section */
-        .top-header {
-            margin-bottom: 32px;
-        }
-
-        .brand-title {
-            font-size: 2.3rem;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .brand-title .badge {
-            background: #ff9000;
-            color: #000000;
-            padding: 2px 10px;
-            border-radius: 6px;
-        }
-
-        .subtitle {
-            color: #9e9e9e;
-            font-size: 0.95rem;
-            max-width: 520px;
-            line-height: 1.4;
-        }
-
-        /* 2-Column Layout */
-        .main-grid {
             display: grid;
-            grid-template-columns: 310px 1fr;
-            gap: 24px;
-            align-items: start;
+            grid-template-columns: 220px minmax(0, 1fr);
+            gap: 20px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 24px;
+            background: rgba(28, 34, 53, 0.98);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
         }
 
-        @media (max-width: 800px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Left Sidebar: Router Hardware Card */
-        .router-card {
-            background: #161616;
-            border: 1px solid #2a2a2a;
-            border-radius: 16px;
-            padding: 18px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
-        }
-
-        .chassis-box {
-            background: linear-gradient(145deg, #1f1f1f, #0d0d0d);
-            border: 1px solid #333333;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 18px;
-        }
-
-        .chassis-top {
+        .sidebar {
+            min-height: 630px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
+            flex-direction: column;
+            padding: 18px 12px 14px;
+            border-radius: 18px;
+            background: #111524;
         }
 
-        .chassis-top strong {
-            font-size: 1.1rem;
-            color: #ff9000;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px 20px;
+            font-size: 15px;
             font-weight: 800;
+            letter-spacing: 0.2px;
         }
 
-        .chassis-top span {
-            font-family: monospace;
-            font-size: 0.78rem;
-            color: #a3a3a3;
-        }
-
-        .ports-row {
+        .brand-mark {
+            width: 34px;
+            height: 34px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            background: linear-gradient(135deg, #b05dc4, #6d74bd);
+            box-shadow: 0 8px 18px rgba(166, 95, 190, 0.18);
         }
 
-        .port {
-            background: #121212;
-            border: 1px solid #2e2e2e;
-            border-radius: 6px;
-            height: 28px;
+        .nav { display: grid; gap: 6px; }
+
+        .nav-item {
+            height: 42px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 11px;
+            padding: 0 12px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            color: #aeb4c7;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 650;
         }
 
-        .led {
+        .nav-item.active {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.07);
+            background: linear-gradient(100deg, rgba(173, 92, 196, 0.62), rgba(115, 113, 185, 0.35));
+        }
+
+        .nav-item svg, .icon-btn svg, .stat-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+        }
+
+        .sidebar-bottom { margin-top: auto; }
+
+        .main { min-width: 0; }
+
+        .topbar {
+            height: 62px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .greeting h1 {
+            margin: 2px 0 3px;
+            font-size: 22px;
+            font-weight: 520;
+            letter-spacing: -0.5px;
+        }
+
+        .greeting p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            color: #aeb4c7;
+            background: #111524;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border: 2px solid #b88ec3;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #e1bacf, #735d83);
+            color: #171c2d;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .profile-copy { line-height: 1.2; }
+        .profile-copy strong { display: block; font-size: 12px; }
+        .profile-copy span { color: var(--muted); font-size: 9px; }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .tab {
+            height: 38px;
+            min-width: 74px;
+            padding: 0 15px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: #b5bacb;
+            background: transparent;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            color: #fff;
+            background: linear-gradient(135deg, #8a568e, #45495f);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 220px 1fr 245px;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: rgba(22, 28, 44, 0.88);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .holding-card {
+            min-height: 180px;
+            padding: 18px;
+            background:
+                linear-gradient(145deg, rgba(100, 82, 132, 0.55), rgba(31, 36, 54, 0.92)),
+                #272b3d;
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #e2e4ec;
+            font-size: 12px;
+        }
+
+        .holding-card h2 {
+            margin: 28px 0 0;
+            font-size: 25px;
+            letter-spacing: -0.7px;
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 8px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: var(--muted);
+            font-size: 9px;
+            background: rgba(10, 13, 23, 0.25);
+        }
+
+        .status-dot {
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: #ff9000;
-            box-shadow: 0 0 8px #ff9000, 0 0 14px rgba(255, 144, 0, 0.5);
-            animation: blink 2.2s infinite ease-in-out;
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(102, 214, 163, 0.7);
         }
 
-        .port:nth-child(2) .led { animation-delay: 0.4s; }
-        .port:nth-child(3) .led { animation-delay: 0.8s; }
-        .port:nth-child(4) .led { animation-delay: 1.2s; }
-
-        /* Specs List */
-        .specs-list {
-            margin-bottom: 16px;
+        .ai-card {
+            margin-top: 12px;
+            min-height: 105px;
+            padding: 14px 16px;
+            background: linear-gradient(145deg, rgba(37, 43, 66, 0.95), rgba(35, 34, 59, 0.95));
         }
 
-        .spec-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 9px 0;
-            border-bottom: 1px solid #242424;
-            font-size: 0.86rem;
+        .ai-card strong { font-size: 12px; }
+        .ai-card p {
+            margin: 9px 0 13px;
+            color: #bbbfd0;
+            font-size: 9px;
+            line-height: 1.45;
         }
 
-        .spec-row:last-child {
-            border-bottom: none;
-        }
-
-        .spec-row span:first-child {
-            color: #8c8c8c;
-        }
-
-        .spec-row span:last-child {
-            font-family: monospace;
-            color: #f3f3f3;
-            font-weight: 600;
-        }
-
-        /* Command Pills */
-        .cmd-pills {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-            margin-bottom: 18px;
-        }
-
-        .pill {
-            background: #202020;
-            border: 1px solid #2e2e2e;
-            color: #d4d4d4;
-            font-family: monospace;
-            font-size: 0.8rem;
-            padding: 8px 12px;
-            border-radius: 7px;
-        }
-
-        /* Action Button */
         .run-btn {
             width: 100%;
-            background: #ff9000;
-            color: #000000;
-            border: none;
-            padding: 13px;
-            border-radius: 10px;
+            height: 36px;
+            border: 0;
+            border-radius: 999px;
+            color: #fff;
+            background: linear-gradient(100deg, #9b5c9e, #d7a6cd);
+            font-size: 10px;
             font-weight: 800;
-            font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(255, 144, 0, 0.25);
         }
 
-        .run-btn:hover {
-            background: #ffa31a;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 144, 0, 0.4);
+        .commands-card {
+            min-height: 268px;
+            padding: 16px;
         }
 
-        .run-btn:active {
-            transform: translateY(0);
+        .command-list {
+            display: grid;
+            gap: 8px;
+            margin-top: 14px;
         }
 
-        /* Right Column: Output Accordion Bars */
-        .outputs-col {
+        .command-row {
+            min-height: 57px;
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            background: rgba(10, 14, 25, 0.18);
         }
+
+        .stat-icon {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            color: #a8aec0;
+            background: #252c40;
+        }
+
+        .command-copy { min-width: 0; }
+        .command-copy strong {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: Consolas, monospace;
+            font-size: 10px;
+        }
+        .command-copy span {
+            display: block;
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 8px;
+        }
+
+        .connection-card {
+            min-height: 268px;
+            padding: 16px;
+        }
+
+        .connection-card .card-head { margin-bottom: 14px; }
+
+        .address-block {
+            display: grid;
+            gap: 8px;
+        }
+
+        .address-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 9px;
+            background: rgba(10, 13, 23, 0.16);
+            font-size: 9px;
+        }
+
+        .address-row span { color: var(--muted); }
+        .address-row strong { font-family: Consolas, monospace; font-size: 9px; }
 
         .error-banner {
-            background: #2b0b0b;
-            border: 1px solid #ff4444;
-            color: #ff9999;
-            padding: 14px 18px;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border: 1px solid rgba(255, 126, 152, 0.28);
+            border-radius: 12px;
+            color: #ffc7d2;
+            background: rgba(255, 126, 152, 0.08);
+            font-size: 11px;
+        }
+
+        .output-panel {
+            min-height: 230px;
+            padding: 16px;
+        }
+
+        .output-panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .output-panel-head strong { font-size: 12px; }
+
+        .outputs {
+            display: grid;
+            gap: 8px;
         }
 
         .empty-state {
-            background: #141414;
-            border: 1px dashed #2e2e2e;
+            min-height: 164px;
+            display: grid;
+            place-items: center;
+            border: 1px dashed rgba(255, 255, 255, 0.08);
             border-radius: 12px;
-            padding: 40px 20px;
+            color: #858da3;
+            font-size: 11px;
             text-align: center;
-            color: #757575;
-            font-size: 0.92rem;
         }
 
         .cmd-bar {
-            background: #141414;
-            border: 1px solid #292929;
-            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 11px;
             overflow: hidden;
-            transition: border-color 0.25s ease;
-            animation: slideIn 0.35s ease forwards;
-        }
-
-        .cmd-bar:hover {
-            border-color: #ff9000;
+            background: #151a29;
         }
 
         .cmd-bar-header {
-            padding: 14px 18px;
+            min-height: 42px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
             cursor: pointer;
-            user-select: none;
-            background: #181818;
-            transition: background 0.2s ease;
-        }
-
-        .cmd-bar-header:hover {
-            background: #202020;
         }
 
         .cmd-left {
-            font-family: monospace;
-            font-size: 0.95rem;
-            font-weight: bold;
+            font-family: Consolas, monospace;
+            font-size: 10px;
         }
 
-        .cmd-left .prompt {
-            color: #ff9000;
-            margin-right: 6px;
-        }
-
-        .cmd-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.82rem;
-            color: #8c8c8c;
-            font-family: monospace;
-        }
-
-        .chevron {
-            transition: transform 0.25s ease;
-            color: #ff9000;
-            font-weight: bold;
-        }
-
-        .cmd-bar.open .chevron {
-            transform: rotate(90deg);
-        }
+        .prompt { color: #ce91c8; margin-right: 7px; }
+        .cmd-meta { color: var(--muted); font-size: 9px; }
 
         .cmd-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #0d0d0d;
+            display: none;
+            border-top: 1px solid var(--line);
+            background: #0e1220;
         }
 
-        .cmd-bar.open .cmd-content {
-            max-height: 500px;
-            overflow-y: auto;
-            border-top: 1px solid #262626;
-        }
-
-        .content-toolbar {
-            display: flex;
-            justify-content: flex-end;
-            padding: 8px 14px 0 14px;
-        }
+        .cmd-bar.open .cmd-content { display: block; }
 
         .copy-btn {
-            background: #222222;
-            color: #ff9000;
-            border: 1px solid #333333;
-            padding: 4px 10px;
-            border-radius: 5px;
-            font-size: 0.75rem;
+            float: right;
+            margin: 8px 8px 0 0;
+            border: 1px solid var(--line);
+            border-radius: 7px;
+            padding: 5px 8px;
+            color: #bd9bbd;
+            background: #1b2031;
+            font-size: 9px;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .copy-btn:hover {
-            background: #ff9000;
-            color: #000000;
         }
 
         pre {
-            padding: 12px 18px 18px 18px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            color: #e5e5e5;
+            max-height: 280px;
+            overflow: auto;
+            margin: 0;
+            padding: 16px;
+            color: #dce0ea;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 10px;
+            line-height: 1.55;
             white-space: pre-wrap;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @media (max-width: 980px) {
+            body { padding: 20px; }
+            .dashboard { grid-template-columns: 180px minmax(0, 1fr); }
+            .stats-grid { grid-template-columns: 200px 1fr; }
+            .connection-card { grid-column: 1 / -1; min-height: auto; }
+            .address-block { grid-template-columns: repeat(2, 1fr); }
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(12px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.35; }
+        @media (max-width: 720px) {
+            body { padding: 10px; }
+            .dashboard { display: block; padding: 12px; border-radius: 18px; }
+            .sidebar { min-height: auto; margin-bottom: 16px; }
+            .brand { padding-bottom: 12px; }
+            .nav { grid-template-columns: repeat(2, 1fr); }
+            .sidebar-bottom { margin-top: 8px; }
+            .topbar { height: auto; margin-bottom: 14px; }
+            .profile-copy { display: none; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .holding-card { min-height: 150px; }
+            .connection-card { grid-column: auto; }
+            .address-block { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="top-header">
-            <div class="brand-title">
-                <span>Router</span><span class="badge">Hub</span>
-            </div>
-            <p class="subtitle">
-                Connect to R1 over Telnet, run the show commands, and inspect each output below.
-            </p>
-        </div>
-
-        <div class="main-grid">
-            <!-- Left Panel -->
-            <div class="router-card">
-                <div class="chassis-box">
-                    <div class="chassis-top">
-                        <strong>R1</strong>
-                        <span>192.168.10.218:32770</span>
-                    </div>
-                    <div class="ports-row">
-                        <div class="port"><div class="led"></div></div>
-                        <div class="port"><div class="led"></div></div>
-                        <div class="port"><div class="led"></div></div>
-                        <div class="port"><div class="led"></div></div>
-                    </div>
-                </div>
-
-                <div class="specs-list">
-                    <div class="spec-row">
-                        <span>Address</span>
-                        <span>192.168.10.218</span>
-                    </div>
-                    <div class="spec-row">
-                        <span>Port</span>
-                        <span>32770</span>
-                    </div>
-                    <div class="spec-row">
-                        <span>Protocol</span>
-                        <span>Telnet</span>
-                    </div>
-                    <div class="spec-row">
-                        <span>Platform</span>
-                        <span>Cisco IOS</span>
-                    </div>
-                </div>
-
-                <div class="cmd-pills">
-                    <div class="pill">show version</div>
-                    <div class="pill">show ip interface brief</div>
-                    <div class="pill">show running-config</div>
-                </div>
-
-                <form method="POST" action="/" onsubmit="loadingBtn()">
-                    <button type="submit" class="run-btn" id="runBtn">Run commands</button>
-                </form>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark">R1</span>
+                <span>RouterHub</span>
             </div>
 
-            <!-- Right Panel -->
-            <div class="outputs-col">
-                {% if error %}
-                <div class="error-banner">
-                    <strong>Connection Error:</strong> {{ error }}
-                </div>
-                {% endif %}
+            <nav class="nav">
+                <a class="nav-item active" href="/">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+                    Dashboard
+                </a>
+                <a class="nav-item" href="#">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>
+                    Sessions
+                </a>
+                <a class="nav-item" href="#">
+                    <svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m6 14v-7m5 7V7"/></svg>
+                    Diagnostics
+                </a>
+                <a class="nav-item" href="#">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 9h10M7 13h6"/></svg>
+                    Commands
+                </a>
+            </nav>
 
-                {% if results %}
-                    {% for cmd, output in results.items() %}
-                    <div class="cmd-bar">
-                        <div class="cmd-bar-header" onclick="this.parentElement.classList.toggle('open')">
-                            <div class="cmd-left">
-                                <span class="prompt">R1#</span>{{ cmd }}
-                            </div>
-                            <div class="cmd-right">
-                                <span>{{ output.splitlines()|length }} lines</span>
-                                <span class="chevron">&gt;</span>
-                            </div>
+            <div class="sidebar-bottom">
+                <a class="nav-item" href="#">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A7 7 0 0 0 14 5l-.3-2h-4L9 5a7 7 0 0 0-2.5 2l-2.4-1-2 3.4L4 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1A7 7 0 0 0 9 19l.3 2h4l.3-2a7 7 0 0 0 2.5-2l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1z"/></svg>
+                    Settings
+                </a>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="greeting">
+                    <h1>Welcome, Admin</h1>
+                    <p>Here is your router network overview</p>
+                </div>
+                <div class="profile">
+                    <button class="icon-btn" type="button" title="Notifications">
+                        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+                    </button>
+                    <div class="avatar">R1</div>
+                    <div class="profile-copy">
+                        <strong>Network Admin</strong>
+                        <span>Local Lab</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="tabs">
+                <button class="tab active" type="button">Overview</button>
+                <button class="tab" type="button">Outputs</button>
+                <button class="tab" type="button">Health</button>
+            </div>
+
+            {% if error %}
+            <div class="error-banner"><strong>Connection error:</strong> {{ error }}</div>
+            {% endif %}
+
+            <section class="stats-grid">
+                <div>
+                    <article class="card holding-card">
+                        <div class="card-head">
+                            <span>Router Status</span>
+                            <span class="status-chip"><span class="status-dot"></span>{% if error %}Offline{% else %}Ready{% endif %}</span>
                         </div>
-                        <div class="cmd-content">
-                            <div class="content-toolbar">
-                                <button type="button" class="copy-btn" onclick="copyText(this)">Copy output</button>
-                            </div>
-                            <pre>{{ output }}</pre>
+                        <h2>R1</h2>
+                        <div class="status-chip" style="margin-top:12px">Cisco IOS</div>
+                    </article>
+
+                    <article class="card ai-card">
+                        <strong>Diagnostics powered by Netmiko</strong>
+                        <p>Connect through Telnet and inspect configuration, interfaces, and platform details.</p>
+                        <form method="POST" action="/" onsubmit="loadingBtn()">
+                            <button type="submit" class="run-btn" id="runBtn">Run diagnostics</button>
+                        </form>
+                    </article>
+                </div>
+
+                <article class="card commands-card">
+                    <div class="card-head">
+                        <span>Command Set</span>
+                        <span class="status-chip">3 commands</span>
+                    </div>
+                    <div class="command-list">
+                        <div class="command-row">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 9 3 3-3 3m6 0h4"/></svg></div>
+                            <div class="command-copy"><strong>show version</strong><span>Platform information</span></div>
+                        </div>
+                        <div class="command-row">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4a14 14 0 0 1 0 16M12 4a14 14 0 0 0 0 16"/></svg></div>
+                            <div class="command-copy"><strong>show ip interface brief</strong><span>Interface status</span></div>
+                        </div>
+                        <div class="command-row">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM15 3v5h5M9 12h7M9 16h7"/></svg></div>
+                            <div class="command-copy"><strong>show running-config</strong><span>Active configuration</span></div>
                         </div>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    {% if not error %}
-                    <div class="empty-state">
-                        Click <strong>Run commands</strong> on the left panel to fetch live outputs from R1.
+                </article>
+
+                <article class="card connection-card">
+                    <div class="card-head">
+                        <span>Connection</span>
+                        <span class="status-chip"><span class="status-dot"></span>Telnet</span>
                     </div>
+                    <div class="address-block">
+                        <div class="address-row"><span>Host</span><strong>192.168.10.218</strong></div>
+                        <div class="address-row"><span>Port</span><strong>32770</strong></div>
+                        <div class="address-row"><span>Protocol</span><strong>Telnet</strong></div>
+                        <div class="address-row"><span>User</span><strong>admin</strong></div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="card output-panel">
+                <div class="output-panel-head">
+                    <strong>Command Outputs</strong>
+                    <span class="status-chip">{% if results %}{{ results|length }} received{% else %}Waiting{% endif %}</span>
+                </div>
+                <div class="outputs">
+                    {% if results %}
+                        {% for cmd, output in results.items() %}
+                        <div class="cmd-bar">
+                            <div class="cmd-bar-header" onclick="this.parentElement.classList.toggle('open')">
+                                <div class="cmd-left"><span class="prompt">R1#</span>{{ cmd }}</div>
+                                <span class="cmd-meta">{{ output.splitlines()|length }} lines &nbsp;⌄</span>
+                            </div>
+                            <div class="cmd-content">
+                                <button type="button" class="copy-btn" onclick="copyText(this)">Copy</button>
+                                <pre>{{ output }}</pre>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        {% if not error %}
+                        <div class="empty-state">
+                            No command output yet.<br>Run diagnostics to connect to R1.
+                        </div>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-            </div>
-        </div>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script>
         function loadingBtn() {
-            const btn = document.getElementById('runBtn');
-            btn.innerText = 'Connecting to R1...';
-            btn.style.opacity = '0.75';
+            const btn = document.getElementById("runBtn");
+            btn.textContent = "Connecting to R1...";
+            btn.style.opacity = "0.75";
         }
 
         function copyText(btn) {
-            const text = btn.closest('.cmd-content').querySelector('pre').innerText;
+            const text = btn.closest(".cmd-content").querySelector("pre").innerText;
             navigator.clipboard.writeText(text).then(() => {
-                btn.innerText = 'Copied!';
-                setTimeout(() => btn.innerText = 'Copy output', 1500);
+                btn.textContent = "Copied!";
+                setTimeout(() => btn.textContent = "Copy", 1500);
             });
         }
     </script>
